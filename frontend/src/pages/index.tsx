@@ -55,7 +55,7 @@ export default function Home() {
 	return (
 		<Layout>
 			<Box w="50rem">
-				<Text size="lg" color="white">
+				<Text fontSize="20px" color="white" textAlign="center">
 					Welcome to ostraka! A cutting-edge blockchain voting system that revolutionizes the way we
 					participate in democratic processes. Embrace a new era of voting with unprecedented freedom and
 					expression, allowing you to have a direct impact on the decisions that matter most to you.
@@ -89,7 +89,11 @@ export default function Home() {
 						onSuccess={setProof}
 						app_id={process.env.NEXT_PUBLIC_APP_ID!}
 					>
-						{({ open }) => <Button onClick={open}>Generate world id proof</Button>}
+						{({ open }) => (
+							<Button w="242px" onClick={open}>
+								Generate world id proof
+							</Button>
+						)}
 					</IDKitWidget>
 				)
 			) : (
