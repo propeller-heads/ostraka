@@ -20,6 +20,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 
+import { VoteStepper } from '@/components/VoteStepper'
 import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons'
 export default function Home() {
 	const { address } = useAccount()
@@ -71,20 +72,6 @@ export default function Home() {
 
 	return (
 		<Layout>
-			<Box
-				w="50rem"
-				boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
-				background="rgba(0, 0, 0, 0.1)"
-				borderRadius="10px"
-				padding={'12px 8px 12px 16px'}
-			>
-				<Text fontSize="20px" color="white" textAlign="center">
-					Welcome to ostraka! A cutting-edge blockchain voting system that revolutionizes the way we
-					participate in democratic processes. Embrace a new era of voting with unprecedented freedom and
-					expression, allowing you to have a direct impact on the decisions that matter most to you.
-				</Text>
-			</Box>
-			<br></br>
 			<Text> {voteSignature} </Text>
 
 			{isClient && address ? (
@@ -129,18 +116,18 @@ export default function Home() {
 				) : (
 					<div>
 						<Text>First, we need to verify that you are a real person.</Text>
-            <IDKitWidget
-              signal={address}
-              action="vote" //TODO: Check if this is required
-              onSuccess={setHumanityProof}
-              app_id={process.env.NEXT_PUBLIC_APP_ID!}
-            >
-              {({ open }) => (
-                <Button w="242px" onClick={open}>
-                  Generate world id proof
-                </Button>
-              )}
-            </IDKitWidget>
+						<IDKitWidget
+							signal={address}
+							action="vote" //TODO: Check if this is required
+							onSuccess={setHumanityProof}
+							app_id={process.env.NEXT_PUBLIC_APP_ID!}
+						>
+							{({ open }) => (
+								<Button w="242px" onClick={open}>
+									Generate world id proof
+								</Button>
+							)}
+						</IDKitWidget>
 					</div>
 				)
 			) : (
