@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BigNumber } from 'ethers'
 import { decode } from '@/lib/wld'
+import Layout from '@/components/Header'
 import ContractAbi from '@/abi/Contract.abi'
 import { ConnectKitButton } from 'connectkit'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
@@ -41,22 +42,24 @@ export default function Home() {
 
 	return (
 		<main>
-			{address ? (
-				proof ? (
-					<button onClick={write}>submit tx</button>
+			<Layout>
+				{address ? (
+					proof ? (
+						<button onClick={write}>submit tx</button>
+					) : (
+						<IDKitWidget
+							signal={address}
+							action="your-action"
+							onSuccess={setProof}
+							app_id={process.env.NEXT_PUBLIC_APP_ID!}
+						>
+							{({ open }) => <button onClick={open}>verify with world id</button>}
+						</IDKitWidget>
+					)
 				) : (
-					<IDKitWidget
-						signal={address}
-						action="your-action"
-						onSuccess={setProof}
-						app_id={process.env.NEXT_PUBLIC_APP_ID!}
-					>
-						{({ open }) => <button onClick={open}>verify with world id</button>}
-					</IDKitWidget>
-				)
-			) : (
-				<ConnectKitButton />
-			)}
+					<ConnectKitButton />
+				)}
+			</Layout>
 		</main>
 	)
 }

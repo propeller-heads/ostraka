@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import { APP_NAME } from '@/lib/consts'
 import type { AppProps } from 'next/app'
 import { WagmiConfig, createClient } from 'wagmi'
+import { ChakraProvider } from '@chakra-ui/react'
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 
 const client = createClient(
@@ -15,7 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
 	return (
 		<WagmiConfig client={client}>
 			<ConnectKitProvider>
-				<Component {...pageProps} />
+				<ChakraProvider>
+					<Component {...pageProps} />
+				</ChakraProvider>
 			</ConnectKitProvider>
 		</WagmiConfig>
 	)
