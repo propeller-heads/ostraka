@@ -23,6 +23,7 @@ import {
 
 import { encode } from 'punycode'
 import SendTx from '@/components/SendTx'
+
 import { VoteStepper } from '@/components/VoteStepper'
 import { useSessionStorage } from '@/hooks/setSessionStorage'
 import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
@@ -30,6 +31,10 @@ import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@c
 export default function Home() {
 	const { address } = useAccount()
 	const [humanityProof, setHumanityProof] = useSessionStorage('humanityProof', null)
+	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
+
+	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
+	const [encodedMessage, setEncodedMessage] = useState<string | undefined>(undefined)
 
 	const [voteSignature, setVoteSignature] = useSessionStorage('voteSignature', undefined)
 	const [encodedMessage, setEncodedMessage] = useSessionStorage('encodedMessage', undefined)
@@ -84,7 +89,10 @@ export default function Home() {
 				height="50vh"
 				maxWidth="800px"
 				margin="0 auto"
-			></Flex>
+			>
+				<Text> {voteSignature} </Text>
+			</Flex>
+
 			{isClient && address ? (
 				humanityProof ? (
 					<Box>
@@ -157,6 +165,7 @@ export default function Home() {
 									}
 								)
 							}}
+							onSuccess={setHumanityProof}
 							app_id={process.env.NEXT_PUBLIC_APP_ID!}
 						>
 							{({ open }) => (
