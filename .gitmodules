@@ -1,0 +1,3 @@
+[submodule "ostraka_contracts/lib/sismo-connect-solidity"]
+	path = ostraka_contracts/lib/sismo-connect-solidity
+	url = https://github.com/sismo-core/sismo-connect-solidity
