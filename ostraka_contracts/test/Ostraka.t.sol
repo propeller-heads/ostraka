@@ -4,27 +4,40 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../src/Ostraka.sol";
 
+contract OstrakaExposed is Ostraka {
+    constructor(IWorldID _worldId) public Ostraka(_worldId) {}
+
+    function exposedVote(bytes memory sismoMessage) external {
+        _vote(sismoMessage);
+    }
+}
+
 contract OstrakaTest is Test {
-    Ostraka public ostraka;
+    OstrakaExposed public ostraka;
 
     function setUp() public {
-        ostraka = new Ostraka();
+        vm.createSelectFork(vm.rpcUrl("mainnet"));
+        IWorldID worldId = IWorldID(0x05C4AE6bC33e6308004a47EbFa99E5Abb4133f86);
+        ostraka = new OstrakaExposed(worldId);
     }
 
-    function testAddOptions() public {
-        // Define the options to add
-        string[] memory descriptions = new string[](2);
-        descriptions[0] = "Option 1";
-        descriptions[1] = "Option 2";
+    function testVote() public {
+        string memory url = "https://www.google.com";
+        // Encode signal and content into a sismo message
+        bytes memory sismoMessage = abi.encodePacked(url, true);
+        bytes memory sismoMessage2 = abi.encodePacked(url, false);
+        // new VotingPool struct
 
-        // Call the addOptions function
-        ostraka.addOptions(descriptions);
+        // Call the vote
+        ostraka.exposedVote(sismoMessage);
+        ostraka.exposedVote(sismoMessage);
+        ostraka.exposedVote(sismoMessage2);
 
-        // Retrieve the options and check they match what we added
-        OptionPool memory option0 = ostraka.optionPools(0);
-        OptionPool memory option1 = ostraka.optionPools(1);
+        // Check the voting pools
+        VotingPool memory pool = ostraka.getVotingPool(url);
 
-        assertEq(option0.description, "Option 1", "Option 0 description does not match");
-        assertEq(option1.description, "Option 2", "Option 1 description does not match");
+        assertEq(pool.positiveVotes, 2);
+        assertEq(pool.negativeVotes, 1);
+        assertEq(pool.content, url);
     }
 }
