@@ -24,8 +24,8 @@ contract OstrakaTest is Test {
     function testVote() public {
         string memory url = "https://www.google.com";
         // Encode signal and content into a sismo message
-        bytes memory sismoMessage = abi.encodePacked(url, true);
-        bytes memory sismoMessage2 = abi.encodePacked(url, false);
+        bytes memory sismoMessage = abi.encode(true, url);
+        bytes memory sismoMessage2 = abi.encode(false, url);
         // new VotingPool struct
 
         // Call the vote
