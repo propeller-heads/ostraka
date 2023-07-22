@@ -106,7 +106,7 @@ export default function Home() {
 			) : (
 				<></>
 			)}
-			<VoteDetails hasVoted={true} />
+			<VoteDetails hasVoted={true} content={input} />
 		</Layout>
 	)
 }

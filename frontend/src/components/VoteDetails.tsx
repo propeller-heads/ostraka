@@ -1,6 +1,7 @@
-import { useRef } from 'react'
+import { useContractRead } from 'wagmi'
+import { useRef, useState } from 'react'
+import VOTE_ABI from '../abi/VoteContract.json'
 import {
-	Text,
 	Drawer,
 	useDisclosure,
 	DrawerOverlay,
@@ -24,11 +25,34 @@ import {
 
 type Props = {
 	hasVoted: boolean
+	content: string
 }
 
-export default function VoteDetails({ hasVoted }: Props) {
+export default function VoteDetails({ hasVoted, content }: Props) {
 	const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: hasVoted })
 	const btnRef = useRef(null)
+
+	const [voteData, setVoteData] = useState<any>({
+		up_votes: undefined,
+		down_votes: undefined,
+	})
+
+	// Avoid sending failing requests
+	// const enabled = voteAddress === undefined || content === undefined ? false : true
+
+	// const { refetch } = useContractRead({
+	// 	address: voteAddress,
+	// 	abi: VOTE_ABI,
+	// 	functionName: 'getVotingPool',
+	// 	args: [content],
+	// 	enabled: enabled,
+	// 	onError(error) {
+	// 		console.error(`Error encountered getting voting pool for ${content}: ${error}`)
+	// 	},
+	// 	onSuccess(data) {
+	// 		setVoteData({ up_votes: data.positiveVotes, downVotes: data.negativeVotes })
+	// 	},
+	// })
 
 	return (
 		<Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef} size="sm">
