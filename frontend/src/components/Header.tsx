@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 import { ConnectKitButton } from 'connectkit'
-import CustomSismoConnectButton from './SismoConnectButton'
 import { Flex, Menu, Image, Spacer, Box } from '@chakra-ui/react'
 
 type Props = {
@@ -14,11 +13,11 @@ export default function Layout({ children }: Props) {
 				flexDirection="row"
 				alignItems="center"
 				justifyContent={'space-between'}
-				background="#02111B"
+				background="#331E36"
 				height="100px"
 			>
 				<Image
-					boxSize="3rem"
+					boxSize="4rem"
 					hideBelow={'md'}
 					style={{ width: '199.94px' }}
 					ml={5}
@@ -31,7 +30,6 @@ export default function Layout({ children }: Props) {
 				</Box>
 			</Flex>
 			<Flex flexDirection={'column'} alignItems={'center'} justifyContent={'center'} height="90vh">
-				<CustomSismoConnectButton />
 				{children}
 			</Flex>
 		</>
