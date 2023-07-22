@@ -82,9 +82,13 @@ contract Ostraka is SismoConnect {
         return true;
     }
 
-    function checkSismoProof(bytes memory sismoConnectResponse) internal returns (bool) {
-        SismoConnectVerifiedResult memory result =
-            verify({responseBytes: sismoConnectResponse, claim: claim, auth: buildAuth({authType: AuthType.VAULT})});
+    function checkSismoProof(bytes memory sismoConnectResponse, bytes memory signature) internal returns (bool) {
+        SismoConnectVerifiedResult memory result = verify({
+            responseBytes: sismoConnectResponse,
+            claim: claim,
+            auth: buildAuth({authType: AuthType.VAULT}),
+            signature: buildSignature({message: signature})
+        });
 
         uint256 user = result.getUserId(AuthType.VAULT);
 
@@ -105,7 +109,7 @@ contract Ostraka is SismoConnect {
         uint256[8] calldata worldcoinProof
     ) external {
         require(checkWorldcoinProof(worldcoinSignal, worldcoinRoot, worldCoinNullifierHash, worldcoinProof));
-        require(checkSismoProof(sismoConnectResponse));
+        require(checkSismoProof(sismoConnectResponse, sismoMessage));
         _vote(sismoMessage);
     }
 
