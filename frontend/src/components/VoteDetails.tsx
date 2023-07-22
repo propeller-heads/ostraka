@@ -25,7 +25,7 @@ import {
 
 type Props = {
 	hasVoted: boolean
-	content: string
+	content: string | undefined
 }
 
 export default function VoteDetails({ hasVoted, content }: Props) {
@@ -40,7 +40,7 @@ export default function VoteDetails({ hasVoted, content }: Props) {
 	const voteAddress = '0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D'
 
 	// Avoid sending failing requests
-	const enabled = content !== ''
+	const enabled = content !== '' && content !== undefined && hasVoted
 
 	console.log('Content: ' + content)
 

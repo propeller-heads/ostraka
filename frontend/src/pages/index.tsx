@@ -1,7 +1,5 @@
-import { BigNumber } from 'ethers'
-import { decode } from '@/lib/wld'
 import Layout from '@/components/Header'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ContractAbi from '@/abi/VoteContract.json'
 import VoteDetails from '@/components/VoteDetails'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
@@ -20,8 +18,7 @@ import {
 } from '@chakra-ui/react'
 
 import { VoteStepper } from '@/components/VoteStepper'
-import { useSessionStorage } from '@/hooks/setSessionStorage'
-import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
+import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons'
 
 export default function Home() {
 	const { address } = useAccount()
@@ -167,7 +164,7 @@ export default function Home() {
 			) : (
 				<></>
 			)}
-			<VoteDetails hasVoted={true} content={input} />
+			<VoteDetails hasVoted={true} content={uri} />
 		</Layout>
 	)
 }
