@@ -1,5 +1,7 @@
 'use client'
 
+import { BigNumber } from 'ethers'
+import { decode } from '@/lib/wld'
 import { Button } from '@chakra-ui/react'
 import ContractAbi from '@/abi/VoteContract.json'
 import { useContractWrite, usePrepareContractWrite } from 'wagmi'
@@ -15,6 +17,7 @@ export default function SendTx({ voteSignature, encodedMessage, address, humanit
 	const parsedValidityProof = JSON.parse(humanityProof)
 	const { config, refetch, error } = usePrepareContractWrite({
 		address: '0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D',
+		chainId: 420,
 		abi: ContractAbi,
 		enabled: parsedValidityProof != null && address != null,
 		functionName: 'vote',
@@ -24,10 +27,30 @@ export default function SendTx({ voteSignature, encodedMessage, address, humanit
 			address,
 			parsedValidityProof?.merkle_root,
 			parsedValidityProof?.nullifier_hash,
-			parsedValidityProof?.proof,
+			parsedValidityProof?.proof
+				? decode<[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]>(
+						'uint256[8]',
+						parsedValidityProof?.proof ?? ''
+				  )
+				: [
+						BigNumber.from(0),
+						BigNumber.from(0),
+						BigNumber.from(0),
+						BigNumber.from(0),
+						BigNumber.from(0),
+						BigNumber.from(0),
+						BigNumber.from(0),
+						BigNumber.from(0),
+				  ],
 		],
 	})
 	const { write } = useContractWrite(config)
 
-	return <Button onClick={() => write?.()}>Submit</Button>
+	return (
+		<div>
+			<Button onClick={() => refetch?.()}>Reload</Button>
+
+			<Button onClick={() => write?.()}>Submit</Button>
+		</div>
+	)
 }

@@ -5,7 +5,6 @@ import {
 	SismoConnectConfig,
 	AuthRequest,
 	ClaimRequest,
-	ClaimType,
 } from '@sismo-core/sismo-connect-react'
 
 const sismoConnectConfig: SismoConnectConfig = {
