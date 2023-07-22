@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import CustomSismoConnectButton from './SismoConnectButton'
-import { Flex, Menu, Image, Spacer } from '@chakra-ui/react'
+import { Flex, Menu, Image, Spacer, Box } from '@chakra-ui/react'
 import { ConnectKitButton } from 'connectkit'
 
 
@@ -21,12 +21,14 @@ export default function Layout({ children }: Props) {
 					alt="ostraka"
 				/>
 				<Spacer />
-				<ConnectKitButton />
+				<Box margin='20px'>
+					<ConnectKitButton />
+				</Box>
 			</Flex>
-			<Flex>
+			<Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} height="90vh">
 				<CustomSismoConnectButton />
 				{children}
 			</Flex>
-		</Menu>
+		</Menu >
 	)
 }

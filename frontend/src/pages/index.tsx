@@ -3,10 +3,9 @@ import { BigNumber } from 'ethers'
 import { decode } from '@/lib/wld'
 import Layout from '@/components/Header'
 import ContractAbi from '@/abi/Contract.abi'
-import { ConnectKitButton } from 'connectkit'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
-import { Box, Button, Flex } from '@chakra-ui/react'
+import { Box, Button, ButtonGroup, Input } from '@chakra-ui/react'
 
 export default function Home() {
 	const { address } = useAccount()
@@ -40,26 +39,30 @@ export default function Home() {
 		],
 	})
 
+	console.log(proof)
+
 	const { write } = useContractWrite(config)
 
 	return (
 		<Layout>
 			{address ? (
 				proof ? (<Box>
-					<input onChange={(event) => {
-						setInput(event.target.value);
-					}}></input>
-					<Button onClick={write}>Up vote</Button>
-					<Button onClick={write}>Down vote</Button>
+					<ButtonGroup>
+						<Input onChange={(event) => {
+							setInput(event.target.value);
+						}}></Input>
+						<Button onClick={write}>Up vote</Button>
+						<Button onClick={write}>Down vote</Button>
+					</ButtonGroup>
 				</Box>
 				) : (
 					<IDKitWidget
 						signal={address}
-						action="your-action" //TODO: Check if this is required
+						action="vote" //TODO: Check if this is required
 						onSuccess={setProof}
 						app_id={process.env.NEXT_PUBLIC_APP_ID!}
 					>
-						{({ open }) => <button onClick={open}>verify with world id</button>}
+						{({ open }) => <Button onClick={open}>Generate world id proof</Button>}
 					</IDKitWidget>
 				)
 			) : (<></>
