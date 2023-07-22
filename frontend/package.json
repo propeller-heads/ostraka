@@ -1,20 +1,32 @@
 {
-  "name": "sismo-connect-onchain-tutorial",
+  "name": "world-id-onchain-starter",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "chain": "anvil --fork-url https://gateway.tenderly.co/public/polygon-mumbai --chain-id 5151111",
-    "dev": "cd front; npm run dev",
-    "deploy-local": "npm run deploy-airdrop && npm run generate-abi",
-    "generate-abi": "front/script/generate-abi.sh",
-    "deploy-airdrop": "forge script DeployAirdrop --rpc-url http://localhost:8545 -vv --mnemonics 'test test test test test test test test test test test junk' --sender '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' --broadcast",
-    "test": "forge test --fork-url https://gateway.tenderly.co/public/polygon-mumbai",
-    "snapshot": "forge snapshot --fork-url https://gateway.tenderly.co/public/polygon-mumbai"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "framer-motion": "^10.13.0"
+    "@types/node": "20.1.2",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
+    "@worldcoin/idkit": "^0.4.9",
+    "autoprefixer": "10.4.14",
+    "connectkit": "1.2.4",
+    "eslint": "8.40.0",
+    "eslint-config-next": "13.4.1",
+    "ethers": "v5",
+    "next": "13.4.1",
+    "postcss": "8.4.23",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.0.4",
+    "wagmi": "0.12.13"
+  },
+  "devDependencies": {
+    "prettier-plugin-sort-imports-desc": "^1.0.0"
   }
 }
