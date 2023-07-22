@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 
+
 export const useSessionStorage = (storageKey: string, fallbackState: any) => {
 	const [value, SetValue] = useState(fallbackState)
 
 	useEffect(() => {
-		SetValue(sessionStorage.getItem(storageKey))
+		SetValue(sessionStorage.getItem(storageKey) || fallbackState)
 	}, [])
 
 	useEffect(() => {
