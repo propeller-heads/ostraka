@@ -37,22 +37,27 @@ export default function VoteDetails({ hasVoted, content }: Props) {
 		down_votes: undefined,
 	})
 
-	// Avoid sending failing requests
-	// const enabled = voteAddress === undefined || content === undefined ? false : true
+	const voteAddress = '0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D'
 
-	// const { refetch } = useContractRead({
-	// 	address: voteAddress,
-	// 	abi: VOTE_ABI,
-	// 	functionName: 'getVotingPool',
-	// 	args: [content],
-	// 	enabled: enabled,
-	// 	onError(error) {
-	// 		console.error(`Error encountered getting voting pool for ${content}: ${error}`)
-	// 	},
-	// 	onSuccess(data) {
-	// 		setVoteData({ up_votes: data.positiveVotes, downVotes: data.negativeVotes })
-	// 	},
-	// })
+	// Avoid sending failing requests
+	const enabled = content !== ''
+
+	console.log('Content: ' + content)
+
+	const { refetch } = useContractRead({
+		address: voteAddress,
+		abi: VOTE_ABI,
+		functionName: 'getVotingPool',
+		args: [content],
+		enabled: enabled,
+		onError(error) {
+			console.error(`Error encountered getting voting pool for ${content}: ${error}`)
+		},
+		onSuccess(data) {
+			console.log('Data: ' + data)
+			// setVoteData({ up_votes: data.positiveVotes, downVotes: data.negativeVotes })
+		},
+	})
 
 	return (
 		<Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef} size="sm">
