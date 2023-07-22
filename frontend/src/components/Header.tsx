@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { ConnectKitButton } from 'connectkit'
-import { Flex, Menu, Image, Spacer, Box } from '@chakra-ui/react'
+import { Flex, Image, Spacer, Box } from '@chakra-ui/react'
 
 type Props = {
 	children?: ReactNode
