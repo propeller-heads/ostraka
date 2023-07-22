@@ -6,6 +6,7 @@ import {ByteHasher} from "./helpers/ByteHasher.sol";
 import {IWorldID} from "./interfaces/IWorldID.sol";
 
 import "sismo-connect-solidity/SismoConnectLib.sol";
+import "eas-contracts/IEAS.sol";
 
 // Holds information about the votes of a content
 struct VotingPool {
@@ -25,6 +26,8 @@ contract Ostraka is SismoConnect {
 
     //worldcoin
     IWorldID internal immutable worldId;
+    //eas
+    IEAS internal immutable eas;
 
     error InvalidProof();
     error AlreadyVoted();
@@ -41,6 +44,7 @@ contract Ostraka is SismoConnect {
 
     /// @dev The World ID group ID (always 1)
     uint256 internal immutable groupId = 1;
+    bytes32 internal immutable schema_uid;
 
     /// @dev Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person
     mapping(uint256 => bool) internal worldcoinNullifierHashes;
@@ -51,11 +55,13 @@ contract Ostraka is SismoConnect {
     ClaimRequest claim;
     mapping(uint256 => bool) internal sismoNullifierHashes;
 
-    constructor(IWorldID _worldId)
+    constructor(IWorldID _worldId, IEAS _eas, bytes32 _schema_uid)
         SismoConnect(buildConfig(_sismoAppId, _isImpersonationMode)) // <--- Sismo Connect constructor
     {
         worldId = _worldId;
+        eas = _eas;
         externalNullifier = abi.encodePacked(_worldcoinAppID).hashToField();
+        schema_uid = _schema_uid;
     }
 
     function checkWorldcoinProof(
@@ -107,10 +113,11 @@ contract Ostraka is SismoConnect {
         uint256 worldcoinRoot,
         uint256 worldCoinNullifierHash,
         uint256[8] calldata worldcoinProof
-    ) external {
+    ) external returns (bytes32 attestation_id) {
         require(checkWorldcoinProof(worldcoinSignal, worldcoinRoot, worldCoinNullifierHash, worldcoinProof));
         require(checkSismoProof(sismoConnectResponse, sismoMessage));
         _vote(sismoMessage);
+        attestation_id = attestVote(sismoMessage);
     }
 
     function _vote(bytes memory sismoMessage) internal {
@@ -139,5 +146,11 @@ contract Ostraka is SismoConnect {
     function getVotingPool(string memory content) external view returns (VotingPool memory) {
         bytes32 content_key = keccak256(abi.encodePacked(content));
         return votingPools[content_key];
+    }
+
+    function attestVote(bytes memory data) internal returns (bytes32 attestation_id) {
+        AttestationRequestData memory attestation_data = AttestationRequestData(address(0), 0, false, 0x0, data, 0);
+        AttestationRequest memory request = AttestationRequest(schema_uid, attestation_data);
+        attestation_id = eas.attest(request);
     }
 }
