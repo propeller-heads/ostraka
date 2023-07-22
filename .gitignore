@@ -39,5 +39,6 @@ next-env.d.ts
 # other
 broadcast
 cache
-
+yarn.lock
+.env
 */out/*
