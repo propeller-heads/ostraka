@@ -19,14 +19,14 @@ import {
 	Text,
 } from '@chakra-ui/react'
 
-import { useSessionStorage } from '@/hooks/setSessionStorage'
 import { VoteStepper } from '@/components/VoteStepper'
+import { useSessionStorage } from '@/hooks/setSessionStorage'
 import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
 
 export default function Home() {
 	const { address } = useAccount()
 	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
-	
+
 	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
 	const [encodedMessage, setEncodedMessage] = useState<string | undefined>(undefined)
 
@@ -101,6 +101,7 @@ export default function Home() {
 				margin="0 auto"
 			>
 				<Text> {voteSignature} </Text>
+			</Flex>
 
 			{isClient && address ? (
 				!humanityProof ? (
@@ -137,11 +138,11 @@ export default function Home() {
 						</ButtonGroup>
 						{uri !== undefined && vote !== undefined ? (
 							<CustomSismoConnectButton
-							url={uri}
-							vote={vote}
-							setSignature={setVoteSignature}
-							setEncodedMessage={setEncodedMessage}
-						/>
+								url={uri}
+								vote={vote}
+								setSignature={setVoteSignature}
+								setEncodedMessage={setEncodedMessage}
+							/>
 						) : (
 							<> </>
 						)}
@@ -149,18 +150,18 @@ export default function Home() {
 				) : (
 					<div>
 						<Text>First, we need to verify that you are a real person.</Text>
-            <IDKitWidget
-              signal={address}
-              action="vote" //TODO: Check if this is required
-              onSuccess={setHumanityProof}
-              app_id={process.env.NEXT_PUBLIC_APP_ID!}
-            >
-              {({ open }) => (
-                <Button w="242px" onClick={open}>
-                  Generate world id proof
-                </Button>
-              )}
-            </IDKitWidget>
+						<IDKitWidget
+							signal={address}
+							action="vote" //TODO: Check if this is required
+							onSuccess={setHumanityProof}
+							app_id={process.env.NEXT_PUBLIC_APP_ID!}
+						>
+							{({ open }) => (
+								<Button w="242px" onClick={open}>
+									Generate world id proof
+								</Button>
+							)}
+						</IDKitWidget>
 					</div>
 				)
 			) : (
