@@ -1,3 +1,5 @@
+'use client'
+
 import { BigNumber } from 'ethers'
 import { decode } from '@/lib/wld'
 import Layout from '@/components/Header'
@@ -19,21 +21,23 @@ import {
 	Text,
 } from '@chakra-ui/react'
 
-import { useSessionStorage } from '@/hooks/setSessionStorage'
+import { encode } from 'punycode'
+import SendTx from '@/components/SendTx'
 import { VoteStepper } from '@/components/VoteStepper'
+import { useSessionStorage } from '@/hooks/setSessionStorage'
 import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
 
 export default function Home() {
 	const { address } = useAccount()
-	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
-	
-	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
-	const [encodedMessage, setEncodedMessage] = useState<string | undefined>(undefined)
+	const [humanityProof, setHumanityProof] = useSessionStorage('humanityProof', null)
+
+	const [voteSignature, setVoteSignature] = useSessionStorage('voteSignature', undefined)
+	const [encodedMessage, setEncodedMessage] = useSessionStorage('encodedMessage', undefined)
+
+	const [uri, setURI] = useSessionStorage('uri', undefined)
+	const [vote, setVote] = useSessionStorage('vote', undefined)
 
 	const [voteStep, setVoteStep] = useState<number>(0)
-
-	const [uri, setURI] = useState<string | undefined>(undefined)
-	const [vote, setVote] = useState<boolean | undefined>(undefined)
 
 	useEffect(() => {
 		console.log('Vote step' + voteStep)
@@ -47,29 +51,10 @@ export default function Home() {
 		}
 	}, [address, humanityProof, voteSignature])
 
-	const { config, refetch } = usePrepareContractWrite({
-		address: '0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D',
-		abi: ContractAbi,
-		enabled: humanityProof != null && address != null,
-		functionName: 'vote',
-		args: [
-			voteSignature,
-			encodedMessage,
-			address,
-			humanityProof?.merkle_root,
-			humanityProof?.nullifier_hash,
-			humanityProof?.proof,
-		],
-	})
 
 	console.log(humanityProof)
 
-	const { write } = useContractWrite(config)
 	const [isClient, setIsClient] = useState(false)
-
-	useEffect(() => {
-		refetch()
-	}, [])
 
 	useEffect(() => {
 		// Once component is mounted it means we're in the client side
@@ -99,11 +84,9 @@ export default function Home() {
 				height="50vh"
 				maxWidth="800px"
 				margin="0 auto"
-			>
-				<Text> {voteSignature} </Text>
-
+			></Flex>
 			{isClient && address ? (
-				!humanityProof ? (
+				humanityProof ? (
 					<Box>
 						<InputGroup size="sm">
 							<InputLeftAddon children="https://twitter.com/" />
@@ -137,30 +120,51 @@ export default function Home() {
 						</ButtonGroup>
 						{uri !== undefined && vote !== undefined ? (
 							<CustomSismoConnectButton
-							url={uri}
-							vote={vote}
-							setSignature={setVoteSignature}
-							setEncodedMessage={setEncodedMessage}
-						/>
+								url={uri}
+								vote={vote}
+								setSignature={setVoteSignature}
+								setEncodedMessage={setEncodedMessage}
+							/>
 						) : (
 							<> </>
+						)}
+						{voteSignature !== undefined &&
+						encodedMessage !== undefined &&
+						address !== undefined &&
+						humanityProof !== null ? (
+							<SendTx
+								voteSignature={voteSignature}
+								encodedMessage={encodedMessage}
+								address={address}
+								humanityProof={humanityProof}
+							></SendTx>
+						) : (
+							<></>
 						)}
 					</Box>
 				) : (
 					<div>
 						<Text>First, we need to verify that you are a real person.</Text>
-            <IDKitWidget
-              signal={address}
-              action="vote" //TODO: Check if this is required
-              onSuccess={setHumanityProof}
-              app_id={process.env.NEXT_PUBLIC_APP_ID!}
-            >
-              {({ open }) => (
-                <Button w="242px" onClick={open}>
-                  Generate world id proof
-                </Button>
-              )}
-            </IDKitWidget>
+						<IDKitWidget
+							signal={address}
+							action="vote" //TODO: Check if this is required
+							onSuccess={(result: ISuccessResult) => {
+								setHumanityProof(
+									{
+										proof: result.proof,
+										merkle_root: result.merkle_root,
+										nullifier_hash: result.nullifier_hash,
+									}
+								)
+							}}
+							app_id={process.env.NEXT_PUBLIC_APP_ID!}
+						>
+							{({ open }) => (
+								<Button w="242px" onClick={open}>
+									Generate world id proof
+								</Button>
+							)}
+						</IDKitWidget>
 					</div>
 				)
 			) : (
