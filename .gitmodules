@@ -1,3 +1,6 @@
 [submodule "ostraka_contracts/lib/sismo-connect-solidity"]
 	path = ostraka_contracts/lib/sismo-connect-solidity
 	url = https://github.com/sismo-core/sismo-connect-solidity
+[submodule "ostraka_contracts/lib/eas-contracts"]
+	path = ostraka_contracts/lib/eas-contracts
+	url = https://github.com/ethereum-attestation-service/eas-contracts
