@@ -7,21 +7,9 @@ import VoteDetails from '@/components/VoteDetails'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import CustomSismoConnectButton from '../components/SismoConnectButton'
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
-import {
-	Box,
-	Button,
-	ButtonGroup,
-	Input,
-	InputGroup,
-	InputLeftAddon,
-	InputLeftElement,
-	InputRightElement,
-	Spacer,
-	Text,
-} from '@chakra-ui/react'
+import { Box, Button, ButtonGroup, Input, InputGroup, InputLeftAddon, InputRightElement, Text } from '@chakra-ui/react'
 
-import { VoteStepper } from '@/components/VoteStepper'
-import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons'
+import { TriangleUpIcon, TriangleDownIcon, ChevronUpIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
 export default function Home() {
 	const { address } = useAccount()
 	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
@@ -76,7 +64,14 @@ export default function Home() {
 
 			{isClient && address ? (
 				!humanityProof ? (
-					<Box>
+					<Box
+						w="500px"
+						boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
+						background="rgba(0, 0, 0, 0.1)"
+						borderRadius="10px"
+						padding={'20px 8px 20px 16px'}
+						textAlign="center"
+					>
 						<InputGroup size="sm">
 							<InputLeftAddon children="https://twitter.com/" />
 							<Input
@@ -84,6 +79,7 @@ export default function Home() {
 								onChange={event => {
 									setURI(event.target.value)
 								}}
+								width="320px"
 							></Input>
 							{vote !== undefined ? (
 								vote ? (
@@ -99,11 +95,22 @@ export default function Home() {
 								<></>
 							)}
 						</InputGroup>
+						<br />
 						<ButtonGroup>
-							<Button disabled={voteSignature !== undefined} onClick={() => setVote(true)}>
+							<Button
+								width="130px"
+								disabled={voteSignature !== undefined}
+								onClick={() => setVote(true)}
+								leftIcon={<ArrowUpIcon boxSize={4} />}
+							>
 								upvote
 							</Button>
-							<Button disabled={voteSignature !== undefined} onClick={() => setVote(false)}>
+							<Button
+								width="130px"
+								disabled={voteSignature !== undefined}
+								onClick={() => setVote(false)}
+								leftIcon={<ArrowDownIcon boxSize={4} />}
+							>
 								downvote
 							</Button>
 						</ButtonGroup>

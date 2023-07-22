@@ -12,20 +12,24 @@ import {
 	useSteps,
 } from '@chakra-ui/react'
 
+type Props = {
+	currentStep: number
+}
+
 const steps = [
 	{ title: 'Connect Wallet', description: 'Connect your wallet' },
 	{ title: 'Verify your Identity', description: 'Verify your identity with WorldCoin' },
 	{ title: 'Vote', description: 'Place your vote' },
 ]
 
-export function VoteStepper() {
+export function VoteStepper({ currentStep }: Props) {
 	const { activeStep } = useSteps({
-		index: 1,
+		index: currentStep,
 		count: steps.length,
 	})
 
 	return (
-		<Stepper index={activeStep} width="60rem">
+		<Stepper index={activeStep} width="60rem" colorScheme="yellow">
 			{steps.map((step, index) => (
 				<Step key={index}>
 					<StepIndicator>

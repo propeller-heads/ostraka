@@ -32,17 +32,12 @@ export default function Layout({ children }: Props) {
 			</Flex>
 			<Flex flexDirection="column" alignItems="center">
 				<br />
-				<VoteStepper />
+				<VoteStepper currentStep={1} />
 				<br />
 				<br />
-				<Box
-					w="50rem"
-					boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
-					background="rgba(0, 0, 0, 0.1)"
-					borderRadius="10px"
-					padding={'12px 8px 12px 16px'}
-				>
-					<Text fontSize="20px" color="white" textAlign="center">
+
+				<Box w="50rem">
+					<Text fontSize="18px" color="white" textAlign="center">
 						Welcome to ostraka! A cutting-edge blockchain voting system that revolutionizes the way we
 						participate in democratic processes. Embrace a new era of voting with unprecedented freedom and
 						expression, allowing you to have a direct impact on the decisions that matter most to you.
