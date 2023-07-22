@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { BigNumber } from 'ethers'
 import { decode } from '@/lib/wld'
 import Layout from '@/components/Header'
+import { useEffect, useState } from 'react'
 import ContractAbi from '@/abi/Contract.abi'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import CustomSismoConnectButton from '../components/SismoConnectButton'
@@ -45,6 +45,12 @@ export default function Home() {
 	console.log(proof)
 
 	const { write } = useContractWrite(config)
+	const [isClient, setIsClient] = useState(false)
+
+	useEffect(() => {
+		// Once component is mounted it means we're in the client side
+		setIsClient(true)
+	}, [])
 
 	return (
 		<Layout>
@@ -56,8 +62,14 @@ export default function Home() {
 				</Text>
 			</Box>
 			<br></br>
-			<CustomSismoConnectButton />
-			{address ? (
+			<CustomSismoConnectButton
+				url={''}
+				vote={false}
+				setSingature={function (signature: string): void {
+					throw new Error('Function not implemented.')
+				}}
+			/>
+			{isClient && address ? (
 				proof ? (
 					<Box>
 						<ButtonGroup>

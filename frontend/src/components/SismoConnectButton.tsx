@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import {
 	SismoConnectButton,
 	AuthType,
@@ -9,26 +10,27 @@ import {
 
 const sismoConnectConfig: SismoConnectConfig = {
 	appId: '0x4a4e9fbd4e3e4d58a57a504a40611c85',
-	// vault: {
-	// 	// For development purposes insert the Data Sources that you want to impersonate
-	// 	// Never use this in production
-	// 	impersonate: [
-	// 		// EVM Data Sources
-	// 		'dhadrien.sismo.eth',
-	// 		'0xA4C94A6091545e40fc9c3E0982AEc8942E282F38',
-	// 		'0x1b9424ed517f7700e7368e34a9743295a225d889',
-	// 		'0x82fbed074f62386ed43bb816f748e8817bf46ff7',
-	// 		'0xc281bd4db5bf94f02a8525dca954db3895685700',
-	// 		// Github Data Source
-	// 		'github:dhadrien',
-	// 		// Twitter Data Source
-	// 		'twitter:dhadrien_',
-	// 		// Telegram Data Source
-	// 		'telegram:dhadrien',
-	// 	],
-	// },
-	vaultAppBaseUrl: 'http://localhost:3000',
-	// displayRawResponse: true, // this enables you to get access directly to the
+	vault: {
+		// For development purposes insert the Data Sources that you want to impersonate
+		// Never use this in production
+		impersonate: [
+			// EVM Data Sources
+			'dhadrien.sismo.eth',
+			'0xA4C94A6091545e40fc9c3E0982AEc8942E282F38',
+			'0x650501319b84266853489addf3709ccfc60c8d53',
+			'0x1b9424ed517f7700e7368e34a9743295a225d889',
+			'0x82fbed074f62386ed43bb816f748e8817bf46ff7',
+			'0xc281bd4db5bf94f02a8525dca954db3895685700',
+			// Github Data Source
+			'github:dhadrien',
+			// Twitter Data Source
+			'twitter:dhadrien_',
+			// Telegram Data Source
+			'telegram:dhadrien',
+		],
+	},
+	// vaultAppBaseUrl: 'http://localhost:3000',
+	displayRawResponse: false, // this enables you to get access directly to the
 	// Sismo Connect Response in the vault instead of redirecting back to the app
 }
 
@@ -40,40 +42,23 @@ const sismoAuths: AuthRequest[] = [
 	{
 		authType: AuthType.EVM_ACCOUNT,
 	},
-	{ authType: AuthType.GITHUB, isOptional: true, isSelectableByUser: true },
+	{ authType: AuthType.TWITTER, isOptional: false },
 ]
 
 const sismoClaims: ClaimRequest[] = [
 	{
-		// claim on Sismo Hub GitHub Contributors Data Group membership: https://factory.sismo.io/groups-explorer?search=0xda1c3726426d5639f4c6352c2c976b87
-		// Data Group members          = contributors to sismo-core/sismo-hub
-		// value for each group member = number of contributions
-		// request user to prove membership in the group
-		groupId: '0xda1c3726426d5639f4c6352c2c976b87', // impersonated github:dhadrien has 1 contribution, eligible
-	},
-	{
-		// claim ENS DAO Voters Data Group membership: https://factory.sismo.io/groups-explorer?search=0x85c7ee90829de70d0d51f52336ea4722
-		// Data Group members          = voters in ENS DAO
-		// value for each group member = number of votes in ENS DAO
-		// request user to prove membership in the group with value >= 17
-		groupId: '0x85c7ee90829de70d0d51f52336ea4722',
-		claimType: ClaimType.GTE,
-		value: 4, // impersonated dhadrien.sismo.eth has 17 votes, eligible
-	},
-	{
-		// claim on Stand with Crypto NFT Minters Data Group membership: https://factory.sismo.io/groups-explorer?search=0xfae674b6cba3ff2f8ce2114defb200b1
-		// Data Group members          = minters of the Stand with Crypto NFT
-		// value for each group member = number of NFT minted
-		// request user to prove membership in the group with value = 10
-		groupId: '0xfae674b6cba3ff2f8ce2114defb200b1',
-		claimType: ClaimType.EQ,
-		value: 10, // dhadrin.sismo.eth minted exactly 10, eligible
-		isSelectableByUser: true, // can reveal more than 15 if they want
-		isOptional: true,
+		groupId: '0xb4bc5aaa69446c7901aaadc88d964414', // user 0x650501319b84266853489addf3709ccfc60c8d53 is in web3 social
 	},
 ]
 
-export default function CustomSismoConnectButton() {
+interface MyComponentProps {
+	url: string
+	vote: boolean
+	setSingature: (signature: string) => void
+}
+
+export default function CustomSismoConnectButton({ url, vote, setSingature }: MyComponentProps) {
+	const encodedMessage = ethers.utils.defaultAbiCoder.encode(['bool', 'string'], [vote, url])
 	return (
 		<SismoConnectButton
 			config={sismoConnectConfig}
@@ -84,14 +69,14 @@ export default function CustomSismoConnectButton() {
 			// When doing so Data Source is not shared to the app.
 			claims={sismoClaims}
 			// Signature = user can sign a message embedded in their zk proof
-			signature={{ message: 'our message' }}
+			signature={{ message: encodedMessage }}
 			// responseBytes = the response from Sismo Connect, will be sent onchain
 			onResponseBytes={(responseBytes: string) => {
 				console.log(responseBytes)
 				//TODO: handle response
 			}}
 			// Some text to display on the button
-			text={'Get Sismo Proof'}
+			text={'Generate Vote Proof'}
 		/>
 	)
 }

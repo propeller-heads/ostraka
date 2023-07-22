@@ -42,3 +42,4 @@ cache
 yarn.lock
 .env
 */out/*
+frontend/yarn.lock
