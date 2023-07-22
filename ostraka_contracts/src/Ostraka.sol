@@ -8,6 +8,11 @@ import {IWorldID} from "../interfaces/IWorldID.sol";
 import "sismo-connect-solidity/SismoLib.sol";
 
 contract Ostraka is SismoConnect {
+    struct Vote {
+        bool signal;
+        address senderAddress;
+    }
+
     //worldcoin
     IWorldID internal immutable worldCoinId;
 
@@ -74,12 +79,14 @@ contract Ostraka is SismoConnect {
     }
 
     function checkSismoProof(
-        bytes memory sismoConnectResponse
+        bytes memory sismoConnectResponse,
+        bytes signature
     ) internal returns (bool) {
         SismoConnectVerifiedResult memory result = verify({
             responseBytes: sismoConnectResponse,
             claim: claim,
-            auth: buildAuth({authType: AuthType.VAULT})
+            auth: buildAuth({authType: AuthType.VAULT}),
+            signature: buildSignature({message: signature})
         });
 
         uint256 vaultId = result.getUserId(AuthType.VAULT);
@@ -94,6 +101,7 @@ contract Ostraka is SismoConnect {
 
     function vote(
         bytes memory sismoConnectResponse,
+        bytes memory sismoMessage,
         address worldcoinSignal,
         uint256 worldcoinRoot,
         uint256 worldCoinNullifierHash,
@@ -109,6 +117,14 @@ contract Ostraka is SismoConnect {
         );
         require(checkSismoProof(sismoConnectResponse));
 
-        // TODO: Send the vote!
+        (bool signal, address receiver) = decodeVote(sismoMessage);
+    }
+
+    function decodeVote(
+        bytes memory encodedMessage
+    ) internal pure returns (bool signal, address senderAddress) {
+        // Decoding the encodedMessage.
+        (signal, senderAddress) = abi.decode(encodedMessage, (bool, address));
+        return (signal, senderAddress);
     }
 }
