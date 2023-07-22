@@ -29,7 +29,6 @@ const sismoConnectConfig: SismoConnectConfig = {
 			'telegram:dhadrien',
 		],
 	},
-	// vaultAppBaseUrl: 'http://localhost:3000',
 	displayRawResponse: false, // this enables you to get access directly to the
 	// Sismo Connect Response in the vault instead of redirecting back to the app
 }
@@ -55,9 +54,15 @@ interface MyComponentProps {
 	url: string
 	vote: boolean
 	setSignature: (signature: string) => void
+	setEncodedMessage: (message: string) => void
 }
 
-export default function CustomSismoConnectButton({ url, vote, setSignature }: MyComponentProps) {
+export default function CustomSismoConnectButton({
+	url,
+	vote,
+	setSignature,
+	setEncodedMessage,
+}: MyComponentProps) {
 	const encodedMessage = ethers.utils.defaultAbiCoder.encode(['bool', 'string'], [vote, url])
 	return (
 		<SismoConnectButton
@@ -72,6 +77,7 @@ export default function CustomSismoConnectButton({ url, vote, setSignature }: My
 			signature={{ message: encodedMessage }}
 			// responseBytes = the response from Sismo Connect, will be sent onchain
 			onResponseBytes={(responseBytes: string) => {
+				setEncodedMessage(encodedMessage)
 				setSignature(responseBytes)
 			}}
 			// Some text to display on the button
