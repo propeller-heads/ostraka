@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import CustomSismoConnectButton from './SismoConnectButton'
 import { Flex, Menu, Image, Spacer } from '@chakra-ui/react'
 
 import title from '../assets/ostraka.svg'
@@ -12,6 +13,7 @@ export default function Layout({ children }: Props) {
 		<Menu>
 			<Flex layerStyle={'headerFlex'}>
 				<Image boxSize="3rem" hideBelow={'md'} style={{ width: '199.94px' }} ml={5} src={title} alt="ostraka" />
+				<CustomSismoConnectButton />
 				<Spacer hideFrom={'md'} />
 				{children}
 			</Flex>
