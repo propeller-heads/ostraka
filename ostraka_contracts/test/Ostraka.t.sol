@@ -37,7 +37,6 @@ contract OstrakaTest is Test {
         ISchemaResolver resolver;
         string memory schema = "bool signal, string content";
         bytes32 schema_uid = schemaRegistry.register(schema, resolver, false);
-        SchemaRecord memory saved_schema = schemaRegistry.getSchema(schema_uid);
 
         ostraka = new OstrakaExposed(worldId, eas, schema_uid);
     }
@@ -67,7 +66,6 @@ contract OstrakaTest is Test {
 
         Attestation memory attestation = eas.getAttestation(attestation_id);
 
-        console.logAddress(attestation.attester);
         assertEq(attestation.data, sismoMessage);
     }
 }
