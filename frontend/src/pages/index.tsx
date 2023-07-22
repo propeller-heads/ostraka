@@ -3,6 +3,7 @@ import { decode } from '@/lib/wld'
 import Layout from '@/components/Header'
 import { useEffect, useState } from 'react'
 import ContractAbi from '@/abi/Contract.abi'
+import VoteDetails from '@/components/VoteDetails'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import CustomSismoConnectButton from '../components/SismoConnectButton'
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
@@ -145,6 +146,7 @@ export default function Home() {
 			) : (
 				<></>
 			)}
+			<VoteDetails hasVoted={true} />
 		</Layout>
 	)
 }
