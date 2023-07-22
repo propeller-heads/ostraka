@@ -30,31 +30,7 @@ export default function Layout({ children }: Props) {
 					<ConnectKitButton />
 				</Box>
 			</Flex>
-			<Flex flexDirection="column" alignItems="center">
-				<br />
-				<VoteStepper currentStep={1} />
-				<br />
-				<br />
-
-				<Box w="50rem">
-					<Text fontSize="18px" color="white" textAlign="center">
-						Welcome to ostraka! A cutting-edge blockchain voting system that revolutionizes the way we
-						participate in democratic processes. Embrace a new era of voting with unprecedented freedom and
-						expression, allowing you to have a direct impact on the decisions that matter most to you.
-					</Text>
-				</Box>
-			</Flex>
-
-			<Flex
-				flexDirection={'column'}
-				alignItems={'center'}
-				justifyContent={'center'}
-				height="50vh"
-				maxWidth="800px"
-				margin="0 auto"
-			>
-				{children}
-			</Flex>
+			{children}
 		</>
 	)
 }

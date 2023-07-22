@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
 	Box,
 	Step,
@@ -23,10 +24,15 @@ const steps = [
 ]
 
 export function VoteStepper({ currentStep }: Props) {
-	const { activeStep } = useSteps({
+	const { activeStep, setActiveStep } = useSteps({
 		index: currentStep,
 		count: steps.length,
 	})
+	console.log('currentStep: ' + currentStep)
+
+	useEffect(() => {
+		setActiveStep(currentStep)
+	}, [currentStep])
 
 	return (
 		<Stepper index={activeStep} width="60rem" colorScheme="yellow">
