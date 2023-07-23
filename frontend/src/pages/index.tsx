@@ -133,7 +133,7 @@ export default function Home() {
 							<ButtonGroup spacing="25px" mt={'20px'}>
 								{uri !== undefined && vote !== undefined ? (
 									<CustomSismoConnectButton
-										url={uri}
+										url={'https://twitter.com/${uri}'}
 										vote={vote}
 										setSignature={setVoteSignature}
 										setEncodedMessage={setEncodedMessage}
