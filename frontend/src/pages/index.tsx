@@ -1,67 +1,53 @@
-import { BigNumber } from 'ethers'
-import { decode } from '@/lib/wld'
+'use client'
+
+import { useAccount } from 'wagmi'
 import Layout from '@/components/Header'
 import { useEffect, useState } from 'react'
-import ContractAbi from '@/abi/Contract.abi'
 import VoteDetails from '@/components/VoteDetails'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import CustomSismoConnectButton from '../components/SismoConnectButton'
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import {
 	Box,
 	Button,
 	ButtonGroup,
+	Flex,
 	Input,
 	InputGroup,
 	InputLeftAddon,
-	InputLeftElement,
 	InputRightElement,
-	Spacer,
 	Text,
 } from '@chakra-ui/react'
 
-import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons'
+import SendTx from '@/components/SendTx'
+
+import { VoteStepper } from '@/components/VoteStepper'
+import { useSessionStorage } from '@/hooks/setSessionStorage'
+import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
+
 export default function Home() {
 	const { address } = useAccount()
-	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
-	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
+	const [humanityProof, setHumanityProof] = useSessionStorage('humanityProof', null)
 
-	const [uri, setURI] = useState<string | undefined>(undefined)
-	const [vote, setVote] = useState<boolean | undefined>(undefined)
+	const [voteSignature, setVoteSignature] = useSessionStorage('voteSignature', undefined)
+	const [encodedMessage, setEncodedMessage] = useSessionStorage('encodedMessage', undefined)
 
-	const { config } = usePrepareContractWrite({
-		abi: ContractAbi,
-		enabled: humanityProof != null && address != null,
-		functionName: 'vote',
-		args: [
-			address!,
-			humanityProof?.merkle_root
-				? decode<bigint>('uint256', humanityProof?.merkle_root ?? '')
-				: BigNumber.from(0).toBigInt(),
-			humanityProof?.nullifier_hash
-				? decode<bigint>('uint256', humanityProof?.nullifier_hash ?? '')
-				: BigNumber.from(0).toBigInt(),
-			humanityProof?.proof
-				? decode<[bigint, bigint, bigint, bigint, bigint, bigint, bigint, bigint]>(
-						'uint256[8]',
-						humanityProof?.proof ?? ''
-				  )
-				: [
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-						BigNumber.from(0).toBigInt(),
-				  ],
-		],
-	})
+	const [uri, setURI] = useSessionStorage('uri', undefined)
+	const [vote, setVote] = useSessionStorage('vote', undefined)
 
-	console.log(humanityProof)
+	const [voteStep, setVoteStep] = useState<number>(0)
 
-	const { write } = useContractWrite(config)
+	useEffect(() => {
+		console.log('Vote step' + voteStep)
+		console.log('Address' + address)
+		if (voteStep === 0 && address !== undefined) {
+			setVoteStep(1)
+		} else if (voteStep === 1 && humanityProof) {
+			setVoteStep(2)
+		} else if (voteStep === 2 && voteSignature !== undefined) {
+			setVoteStep(3)
+		}
+	}, [address, humanityProof, voteSignature])
+
 	const [isClient, setIsClient] = useState(false)
 
 	useEffect(() => {
@@ -71,82 +57,134 @@ export default function Home() {
 
 	return (
 		<Layout>
-			<Box
-				w="50rem"
-				boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
-				background="rgba(0, 0, 0, 0.1)"
-				borderRadius="10px"
-				padding={'12px 8px 12px 16px'}
-			>
-				<Text fontSize="20px" color="white" textAlign="center">
-					Welcome to ostraka! A cutting-edge blockchain voting system that revolutionizes the way we
-					participate in democratic processes. Embrace a new era of voting with unprecedented freedom and
-					expression, allowing you to have a direct impact on the decisions that matter most to you.
-				</Text>
-			</Box>
-			<br></br>
-			<Text> {voteSignature} </Text>
+			<Flex flexDirection="column" alignItems="center">
+				<br />
+				<VoteStepper currentStep={voteStep} />
+				<br />
+				<br />
 
-			{isClient && address ? (
-				!humanityProof ? (
-					<Box>
-						<InputGroup size="sm">
-							<InputLeftAddon children="https://twitter.com/" />
-							<Input
-								disabled={voteSignature !== undefined}
-								onChange={event => {
-									setURI(event.target.value)
-								}}
-							></Input>
-							{vote !== undefined ? (
-								vote ? (
-									<InputRightElement>
-										<TriangleUpIcon color="green.500" />
-									</InputRightElement>
+				<Box w="50rem">
+					<Text fontSize="18px" color="white" textAlign="center">
+						Welcome to ostraka! A cutting-edge blockchain voting system that revolutionizes the way we
+						participate in democratic processes. Embrace a new era of voting with unprecedented freedom and
+						expression, allowing you to have a direct impact on the decisions that matter most to you.
+					</Text>
+				</Box>
+			</Flex>
+			<Flex
+				flexDirection={'column'}
+				alignItems={'center'}
+				justifyContent={'center'}
+				height="50vh"
+				maxWidth="800px"
+				margin="0 auto"
+			>
+				{isClient && address ? (
+					humanityProof ? (
+						<Box
+							w="500px"
+							boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
+							background="rgba(0, 0, 0, 0.1)"
+							borderRadius="10px"
+							padding={'20px 8px 20px 16px'}
+							textAlign="center"
+						>
+							<InputGroup size="sm">
+								<InputLeftAddon children="https://twitter.com/" />
+								<Input
+									disabled={voteSignature !== undefined}
+									onChange={event => {
+										setURI(event.target.value)
+									}}
+								></Input>
+								{vote !== undefined ? (
+									vote ? (
+										<InputRightElement>
+											<TriangleUpIcon color="green.500" />
+										</InputRightElement>
+									) : (
+										<InputRightElement>
+											<TriangleDownIcon color="red.500" />
+										</InputRightElement>
+									)
 								) : (
-									<InputRightElement>
-										<TriangleDownIcon color="red.500" />
-									</InputRightElement>
-								)
+									<></>
+								)}
+							</InputGroup>
+							<br />
+							<ButtonGroup spacing="25px">
+								<Button
+									disabled={voteSignature !== undefined}
+									onClick={() => setVote(true)}
+									width="130px"
+									leftIcon={<ArrowUpIcon boxSize={4} />}
+								>
+									upvote
+								</Button>
+								<Button
+									disabled={voteSignature !== undefined}
+									onClick={() => setVote(false)}
+									width="130px"
+									leftIcon={<ArrowDownIcon boxSize={4} />}
+								>
+									downvote
+								</Button>
+							</ButtonGroup>
+							<ButtonGroup spacing="25px" mt={'20px'}>
+								{uri !== undefined && vote !== undefined ? (
+									<CustomSismoConnectButton
+										url={'https://twitter.com/${uri}'}
+										vote={vote}
+										setSignature={setVoteSignature}
+										setEncodedMessage={setEncodedMessage}
+									/>
+								) : (
+									<> </>
+								)}
+							</ButtonGroup>
+							{voteSignature !== undefined &&
+							encodedMessage !== undefined &&
+							address !== undefined &&
+							humanityProof !== null ? (
+								<SendTx
+									voteSignature={voteSignature}
+									encodedMessage={encodedMessage}
+									address={address}
+									humanityProof={humanityProof}
+								></SendTx>
 							) : (
 								<></>
 							)}
-						</InputGroup>
-						<ButtonGroup>
-							<Button disabled={voteSignature !== undefined} onClick={() => setVote(true)}>
-								upvote
-							</Button>
-							<Button disabled={voteSignature !== undefined} onClick={() => setVote(false)}>
-								downvote
-							</Button>
-						</ButtonGroup>
-						{uri !== undefined && vote !== undefined ? (
-							<CustomSismoConnectButton url={uri} vote={vote} setSignature={setVoteSignature} />
-						) : (
-							<> </>
-						)}
-					</Box>
+						</Box>
+					) : (
+						<Flex flexDirection="column" alignItems="center">
+							<Text>First, we need to verify that you are a real person.</Text>
+							<br />
+							<IDKitWidget
+								signal={address}
+								action="vote" //TODO: Check if this is required
+								onSuccess={(result: ISuccessResult) => {
+									setHumanityProof({
+										proof: result.proof,
+										merkle_root: result.merkle_root,
+										nullifier_hash: result.nullifier_hash,
+									})
+								}}
+								app_id="app_staging_68cbb33784d54d3b69de47b29857af3e"
+							>
+								{({ open }) => (
+									<Button w="242px" onClick={open}>
+										Generate world id proof
+									</Button>
+								)}
+							</IDKitWidget>
+						</Flex>
+					)
 				) : (
-					<div>
-						<Text>First, we need to verify that you are a real person.</Text>
-            <IDKitWidget
-              signal={address}
-              action="vote" //TODO: Check if this is required
-              onSuccess={setHumanityProof}
-              app_id={process.env.NEXT_PUBLIC_APP_ID!}
-            >
-              {({ open }) => (
-                <Button w="242px" onClick={open}>
-                  Generate world id proof
-                </Button>
-              )}
-            </IDKitWidget>
-					</div>
-				)
-			) : (
-				<></>
-			)}
-			<VoteDetails hasVoted={true} />
+					<></>
+				)}
+			</Flex>
+			<VoteDetails vote={voteSignature !== undefined ? vote : undefined} content={uri} />
 		</Layout>
 	)
 }

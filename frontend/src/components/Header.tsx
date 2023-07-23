@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
+import { VoteStepper } from './VoteStepper'
 import { ConnectKitButton } from 'connectkit'
-import { Flex, Image, Spacer, Box } from '@chakra-ui/react'
+import { Flex, Text, Image, Spacer, Box } from '@chakra-ui/react'
 
 type Props = {
 	children?: ReactNode
@@ -29,16 +30,7 @@ export default function Layout({ children }: Props) {
 					<ConnectKitButton />
 				</Box>
 			</Flex>
-			<Flex
-				flexDirection={'column'}
-				alignItems={'center'}
-				justifyContent={'center'}
-				height="90vh"
-				maxWidth="800px"
-				margin="0 auto"
-			>
-				{children}
-			</Flex>
+			{children}
 		</>
 	)
 }

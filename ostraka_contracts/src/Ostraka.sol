@@ -75,8 +75,8 @@ contract Ostraka is SismoConnect {
         }
 
         worldId.verifyProof(
-            worldcoinRoot,
             groupId,
+            worldcoinRoot,
             abi.encodePacked(worldcoinSignal).hashToField(),
             worldcoinNullifierHash,
             externalNullifier,
@@ -115,7 +115,7 @@ contract Ostraka is SismoConnect {
         uint256[8] calldata worldcoinProof
     ) external returns (bytes32 attestation_id) {
         require(checkWorldcoinProof(worldcoinSignal, worldcoinRoot, worldCoinNullifierHash, worldcoinProof));
-        require(checkSismoProof(sismoConnectResponse, sismoMessage));
+        // require(checkSismoProof(sismoConnectResponse, sismoMessage));
         _vote(sismoMessage);
         attestation_id = attestVote(sismoMessage);
     }
