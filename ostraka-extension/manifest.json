@@ -1,0 +1,37 @@
+{
+    "manifest_version": 3,
+    "name": "Ostraka",
+    "version": "1.0",
+    "description": "Check your tweet votes",
+    "icons": {
+        "16": "images/ostraka-icon.png",
+        "32": "images/ostraka-icon.png",
+        "48": "images/ostraka-icon.png",
+        "128": "images/ostraka-icon.png"
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "scripts/web3.js",
+                "scripts/content.js"
+            ],
+            "matches": [
+                "https://twitter.com/*"
+            ],
+            "type": "module"
+        }
+    ],
+    "dependencies": {
+        "ethers": "^5.5.0"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "images/icon-small.png"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
