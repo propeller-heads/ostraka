@@ -50,14 +50,14 @@ const sismoClaims: ClaimRequest[] = [
 ]
 
 interface MyComponentProps {
-	url: string
-	vote: boolean
+	url?: string
+	vote?: boolean
 	setSignature: (signature: string) => void
 	setEncodedMessage: (message: string) => void
 }
 
 export default function CustomSismoConnectButton({ url, vote, setSignature, setEncodedMessage }: MyComponentProps) {
-	const encodedMessage = ethers.utils.defaultAbiCoder.encode(['bool', 'string'], [vote, url])
+	const encodedMessage = ethers.utils.defaultAbiCoder.encode(['bool', 'string'], [vote || false, url || ''])
 	return (
 		<SismoConnectButton
 			config={sismoConnectConfig}

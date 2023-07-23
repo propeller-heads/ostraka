@@ -79,7 +79,6 @@ export default function Home() {
 				maxWidth="800px"
 				margin="0 auto"
 			>
-				<Text> {voteSignature} </Text>
 				{isClient && address ? (
 					humanityProof ? (
 						<Box
@@ -131,16 +130,18 @@ export default function Home() {
 									downvote
 								</Button>
 							</ButtonGroup>
-							{uri !== undefined && vote !== undefined ? (
-								<CustomSismoConnectButton
-									url={uri}
-									vote={vote}
-									setSignature={setVoteSignature}
-									setEncodedMessage={setEncodedMessage}
-								/>
-							) : (
-								<> </>
-							)}
+							<ButtonGroup spacing="25px" mt={'20px'}>
+								{uri !== undefined && vote !== undefined ? (
+									<CustomSismoConnectButton
+										url={uri}
+										vote={vote}
+										setSignature={setVoteSignature}
+										setEncodedMessage={setEncodedMessage}
+									/>
+								) : (
+									<> </>
+								)}
+							</ButtonGroup>
 							{voteSignature !== undefined &&
 							encodedMessage !== undefined &&
 							address !== undefined &&

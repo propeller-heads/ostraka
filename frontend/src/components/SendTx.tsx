@@ -52,9 +52,13 @@ export default function SendTx({ voteSignature, encodedMessage, address, humanit
 
 	return (
 		<div>
-			<Button onClick={() => refetch?.()}>Reload</Button>
+			<Button mt={'20px'} onClick={() => refetch?.()}>
+				Reload
+			</Button>
 
-			<Button onClick={() => write?.()}>Submit</Button>
+			<Button mt={'20px'} onClick={() => write?.()}>
+				Submit
+			</Button>
 		</div>
 	)
 }
