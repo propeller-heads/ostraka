@@ -27,10 +27,6 @@ import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@c
 export default function Home() {
 	const { address } = useAccount()
 	const [humanityProof, setHumanityProof] = useSessionStorage('humanityProof', null)
-	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
-
-	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
-	const [encodedMessage, setEncodedMessage] = useState<string | undefined>(undefined)
 
 	const [voteSignature, setVoteSignature] = useSessionStorage('voteSignature', undefined)
 	const [encodedMessage, setEncodedMessage] = useSessionStorage('encodedMessage', undefined)
