@@ -5,7 +5,6 @@ import {
 	SismoConnectConfig,
 	AuthRequest,
 	ClaimRequest,
-	ClaimType,
 } from '@sismo-core/sismo-connect-react'
 
 const sismoConnectConfig: SismoConnectConfig = {
@@ -57,12 +56,7 @@ interface MyComponentProps {
 	setEncodedMessage: (message: string) => void
 }
 
-export default function CustomSismoConnectButton({
-	url,
-	vote,
-	setSignature,
-	setEncodedMessage,
-}: MyComponentProps) {
+export default function CustomSismoConnectButton({ url, vote, setSignature, setEncodedMessage }: MyComponentProps) {
 	const encodedMessage = ethers.utils.defaultAbiCoder.encode(['bool', 'string'], [vote, url])
 	return (
 		<SismoConnectButton
