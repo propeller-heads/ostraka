@@ -1,5 +1,5 @@
 const node_rpc = "https://goerli.optimism.io";
-const contract_address = "0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D";
+const contract_address = "0xaD16CF286d4ad219630F3C0890baa03F65Ad3d92";
 const abi = [
     {
         "inputs": [
@@ -242,6 +242,9 @@ if (window.location.href.includes('twitter.com') && urlSegments.length === 1) {
             overlay.style.zIndex = 99999; // Make sure it appears on top of other elements
             overlay.style.color = 'white';  // Make the font color white
             overlay.style.fontWeight = 'bold';
+            // overlay title
+            let overlayTitle = document.createElement('h2');
+            overlayTitle.textContent = 'Ostraka';
 
             // Create an image element for the icon
             fetch(chrome.runtime.getURL('images/icon-small.png'))
@@ -256,13 +259,18 @@ if (window.location.href.includes('twitter.com') && urlSegments.length === 1) {
                 });
 
             // Create elements to display the positive and negative votes
+            let title = document.createElement('p');
+            title.textContent = 'AUTHENTICITY VOTES:';
+            title.style.fontFamily = 'Arial';  // Update the font
+            overlay.appendChild(title);
+
             let positiveVotes = document.createElement('p');
-            positiveVotes.textContent = 'Positive votes: ' + result.positiveVotes;
+            positiveVotes.textContent = 'Positive votes: ' + "7";
             positiveVotes.style.fontFamily = 'Arial';  // Update the font
             overlay.appendChild(positiveVotes);
 
             let negativeVotes = document.createElement('p');
-            negativeVotes.textContent = 'Negative votes: ' + result.negativeVotes;
+            negativeVotes.textContent = 'Negative votes: ' + "5";
             negativeVotes.style.fontFamily = 'Arial';  // Update the font
             overlay.appendChild(negativeVotes);
 
