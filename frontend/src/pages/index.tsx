@@ -168,8 +168,7 @@ export default function Home() {
 										nullifier_hash: result.nullifier_hash,
 									})
 								}}
-								onSuccess={setHumanityProof}
-								app_id={process.env.NEXT_PUBLIC_APP_ID!}
+								app_id="app_staging_68cbb33784d54d3b69de47b29857af3e"
 							>
 								{({ open }) => (
 									<Button w="242px" onClick={open}>
