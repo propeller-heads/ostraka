@@ -1,10 +1,11 @@
+'use client'
+
+import { useAccount } from 'wagmi'
 import Layout from '@/components/Header'
 import { useEffect, useState } from 'react'
-import ContractAbi from '@/abi/VoteContract.json'
 import VoteDetails from '@/components/VoteDetails'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import CustomSismoConnectButton from '../components/SismoConnectButton'
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import {
 	Box,
 	Button,
@@ -17,20 +18,27 @@ import {
 	Text,
 } from '@chakra-ui/react'
 
+import SendTx from '@/components/SendTx'
+
 import { VoteStepper } from '@/components/VoteStepper'
+import { useSessionStorage } from '@/hooks/setSessionStorage'
 import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'
 
 export default function Home() {
 	const { address } = useAccount()
+	const [humanityProof, setHumanityProof] = useSessionStorage('humanityProof', null)
 	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
 
 	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
 	const [encodedMessage, setEncodedMessage] = useState<string | undefined>(undefined)
 
-	const [voteStep, setVoteStep] = useState<number>(0)
+	const [voteSignature, setVoteSignature] = useSessionStorage('voteSignature', undefined)
+	const [encodedMessage, setEncodedMessage] = useSessionStorage('encodedMessage', undefined)
 
-	const [uri, setURI] = useState<string | undefined>(undefined)
-	const [vote, setVote] = useState<boolean | undefined>(undefined)
+	const [uri, setURI] = useSessionStorage('uri', undefined)
+	const [vote, setVote] = useSessionStorage('vote', undefined)
+
+	const [voteStep, setVoteStep] = useState<number>(0)
 
 	useEffect(() => {
 		console.log('Vote step' + voteStep)
@@ -44,27 +52,7 @@ export default function Home() {
 		}
 	}, [address, humanityProof, voteSignature])
 
-	const { config, refetch } = usePrepareContractWrite({
-		address: '0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D',
-		abi: ContractAbi,
-		enabled: humanityProof != null && address != null,
-		functionName: 'vote',
-		args: [
-			voteSignature,
-			encodedMessage,
-			address,
-			humanityProof?.merkle_root,
-			humanityProof?.nullifier_hash,
-			humanityProof?.proof,
-		],
-	})
-
-	const { write } = useContractWrite(config)
 	const [isClient, setIsClient] = useState(false)
-
-	useEffect(() => {
-		refetch()
-	}, [])
 
 	useEffect(() => {
 		// Once component is mounted it means we're in the client side
@@ -97,7 +85,7 @@ export default function Home() {
 			>
 				<Text> {voteSignature} </Text>
 				{isClient && address ? (
-					!humanityProof ? (
+					humanityProof ? (
 						<Box
 							w="500px"
 							boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
@@ -157,6 +145,19 @@ export default function Home() {
 							) : (
 								<> </>
 							)}
+							{voteSignature !== undefined &&
+							encodedMessage !== undefined &&
+							address !== undefined &&
+							humanityProof !== null ? (
+								<SendTx
+									voteSignature={voteSignature}
+									encodedMessage={encodedMessage}
+									address={address}
+									humanityProof={humanityProof}
+								></SendTx>
+							) : (
+								<></>
+							)}
 						</Box>
 					) : (
 						<div>
@@ -164,6 +165,13 @@ export default function Home() {
 							<IDKitWidget
 								signal={address}
 								action="vote" //TODO: Check if this is required
+								onSuccess={(result: ISuccessResult) => {
+									setHumanityProof({
+										proof: result.proof,
+										merkle_root: result.merkle_root,
+										nullifier_hash: result.nullifier_hash,
+									})
+								}}
 								onSuccess={setHumanityProof}
 								app_id={process.env.NEXT_PUBLIC_APP_ID!}
 							>
