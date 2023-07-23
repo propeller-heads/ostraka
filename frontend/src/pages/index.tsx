@@ -1,14 +1,11 @@
 'use client'
 
-import { BigNumber } from 'ethers'
-import { decode } from '@/lib/wld'
+import { useAccount } from 'wagmi'
 import Layout from '@/components/Header'
-import { use, useEffect, useState } from 'react'
-import ContractAbi from '@/abi/VoteContract.json'
+import { useEffect, useState } from 'react'
 import VoteDetails from '@/components/VoteDetails'
 import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
 import CustomSismoConnectButton from '../components/SismoConnectButton'
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import {
 	Box,
 	Button,
@@ -21,7 +18,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 
-import { encode } from 'punycode'
 import SendTx from '@/components/SendTx'
 
 import { VoteStepper } from '@/components/VoteStepper'
@@ -52,8 +48,6 @@ export default function Home() {
 		}
 	}, [address, humanityProof, voteSignature])
 
-	console.log(humanityProof)
-
 	const [isClient, setIsClient] = useState(false)
 
 	useEffect(() => {
@@ -77,91 +71,118 @@ export default function Home() {
 					</Text>
 				</Box>
 			</Flex>
-
-			{isClient && address ? (
-				humanityProof ? (
-					<Box>
-						<InputGroup size="sm">
-							<InputLeftAddon children="https://twitter.com/" />
-							<Input
-								disabled={voteSignature !== undefined}
-								onChange={event => {
-									setURI(event.target.value)
-								}}
-							></Input>
-							{vote !== undefined ? (
-								vote ? (
-									<InputRightElement>
-										<TriangleUpIcon color="green.500" />
-									</InputRightElement>
+			<Flex
+				flexDirection={'column'}
+				alignItems={'center'}
+				justifyContent={'center'}
+				height="50vh"
+				maxWidth="800px"
+				margin="0 auto"
+			>
+				<Text> {voteSignature} </Text>
+				{isClient && address ? (
+					humanityProof ? (
+						<Box
+							w="500px"
+							boxShadow="rgba(0, 0, 0, 0.1) 0px 6px 10px"
+							background="rgba(0, 0, 0, 0.1)"
+							borderRadius="10px"
+							padding={'20px 8px 20px 16px'}
+							textAlign="center"
+						>
+							<InputGroup size="sm">
+								<InputLeftAddon children="https://twitter.com/" />
+								<Input
+									disabled={voteSignature !== undefined}
+									onChange={event => {
+										setURI(event.target.value)
+									}}
+								></Input>
+								{vote !== undefined ? (
+									vote ? (
+										<InputRightElement>
+											<TriangleUpIcon color="green.500" />
+										</InputRightElement>
+									) : (
+										<InputRightElement>
+											<TriangleDownIcon color="red.500" />
+										</InputRightElement>
+									)
 								) : (
-									<InputRightElement>
-										<TriangleDownIcon color="red.500" />
-									</InputRightElement>
-								)
+									<></>
+								)}
+							</InputGroup>
+							<br />
+							<ButtonGroup spacing="25px">
+								<Button
+									disabled={voteSignature !== undefined}
+									onClick={() => setVote(true)}
+									width="130px"
+									leftIcon={<ArrowUpIcon boxSize={4} />}
+								>
+									upvote
+								</Button>
+								<Button
+									disabled={voteSignature !== undefined}
+									onClick={() => setVote(false)}
+									width="130px"
+									leftIcon={<ArrowDownIcon boxSize={4} />}
+								>
+									downvote
+								</Button>
+							</ButtonGroup>
+							{uri !== undefined && vote !== undefined ? (
+								<CustomSismoConnectButton
+									url={uri}
+									vote={vote}
+									setSignature={setVoteSignature}
+									setEncodedMessage={setEncodedMessage}
+								/>
+							) : (
+								<> </>
+							)}
+							{voteSignature !== undefined &&
+							encodedMessage !== undefined &&
+							address !== undefined &&
+							humanityProof !== null ? (
+								<SendTx
+									voteSignature={voteSignature}
+									encodedMessage={encodedMessage}
+									address={address}
+									humanityProof={humanityProof}
+								></SendTx>
 							) : (
 								<></>
 							)}
-						</InputGroup>
-						<ButtonGroup>
-							<Button disabled={voteSignature !== undefined} onClick={() => setVote(true)}>
-								upvote
-							</Button>
-							<Button disabled={voteSignature !== undefined} onClick={() => setVote(false)}>
-								downvote
-							</Button>
-						</ButtonGroup>
-						{uri !== undefined && vote !== undefined ? (
-							<CustomSismoConnectButton
-								url={uri}
-								vote={vote}
-								setSignature={setVoteSignature}
-								setEncodedMessage={setEncodedMessage}
-							/>
-						) : (
-							<> </>
-						)}
-						{voteSignature !== undefined &&
-						encodedMessage !== undefined &&
-						address !== undefined &&
-						humanityProof !== null ? (
-							<SendTx
-								voteSignature={voteSignature}
-								encodedMessage={encodedMessage}
-								address={address}
-								humanityProof={humanityProof}
-							></SendTx>
-						) : (
-							<></>
-						)}
-					</Box>
+						</Box>
+					) : (
+						<div>
+							<Text>First, we need to verify that you are a real person.</Text>
+							<IDKitWidget
+								signal={address}
+								action="vote" //TODO: Check if this is required
+								onSuccess={(result: ISuccessResult) => {
+									setHumanityProof({
+										proof: result.proof,
+										merkle_root: result.merkle_root,
+										nullifier_hash: result.nullifier_hash,
+									})
+								}}
+								app_id="app_staging_68cbb33784d54d3b69de47b29857af3e"
+							>
+								{({ open }) => (
+									<Button w="242px" onClick={open}>
+										Generate world id proof
+									</Button>
+								)}
+							</IDKitWidget>
+						</div>
+					)
 				) : (
-					<div>
-						<Text>First, we need to verify that you are a real person.</Text>
-						<IDKitWidget
-							signal={address}
-							action="vote" //TODO: Check if this is required
-							onSuccess={(result: ISuccessResult) => {
-								setHumanityProof({
-									proof: result.proof,
-									merkle_root: result.merkle_root,
-									nullifier_hash: result.nullifier_hash,
-								})
-							}}
-							app_id="app_staging_68cbb33784d54d3b69de47b29857af3e"
-						>
-							{({ open }) => (
-								<Button w="242px" onClick={open}>
-									Generate world id proof
-								</Button>
-							)}
-						</IDKitWidget>
-					</div>
-				)
-			) : (
-				<></>
-			)}
-			<VoteDetails hasVoted={true} />
+					<></>
+				)}
+			</Flex>
+			<VoteDetails vote={voteSignature !== undefined ? vote : undefined} content={uri} />
 		</Layout>
 	)
 }

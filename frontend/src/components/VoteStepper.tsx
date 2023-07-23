@@ -28,7 +28,6 @@ export function VoteStepper({ currentStep }: Props) {
 		index: currentStep,
 		count: steps.length,
 	})
-	console.log('currentStep: ' + currentStep)
 
 	useEffect(() => {
 		setActiveStep(currentStep)
