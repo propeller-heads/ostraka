@@ -32,7 +32,7 @@ type Props = {
 }
 
 export default function VoteDetails({ vote, content }: Props) {
-	const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true }) //vote !== undefined })
+	const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false }) //vote !== undefined })
 	const btnRef = useRef(null)
 
 	const [voteData, setVoteData] = useState<any>({
