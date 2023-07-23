@@ -85,7 +85,11 @@ export default function VoteDetails({ vote, content }: Props) {
 
 					<DrawerBody>
 						<br />
-						<p>Your {vote ? 'up' : 'down'} vote has been successfully registered!</p>
+						{vote !== undefined ? (
+							<p>Your {vote ? 'up' : 'down'} vote has been successfully registered!</p>
+						) : (
+							<></>
+						)}
 						<br />
 						<br />
 						<Card background="">

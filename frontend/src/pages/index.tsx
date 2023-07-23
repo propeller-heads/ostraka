@@ -157,8 +157,9 @@ export default function Home() {
 							)}
 						</Box>
 					) : (
-						<div>
+						<Flex flexDirection="column" alignItems="center">
 							<Text>First, we need to verify that you are a real person.</Text>
+							<br />
 							<IDKitWidget
 								signal={address}
 								action="vote" //TODO: Check if this is required
@@ -177,7 +178,7 @@ export default function Home() {
 									</Button>
 								)}
 							</IDKitWidget>
-						</div>
+						</Flex>
 					)
 				) : (
 					<></>
