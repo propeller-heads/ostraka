@@ -31,10 +31,6 @@ import { TriangleUpIcon, TriangleDownIcon, ArrowUpIcon, ArrowDownIcon } from '@c
 export default function Home() {
 	const { address } = useAccount()
 	const [humanityProof, setHumanityProof] = useSessionStorage('humanityProof', null)
-	const [humanityProof, setHumanityProof] = useState<ISuccessResult | null>(null)
-
-	const [voteSignature, setVoteSignature] = useState<string | undefined>(undefined)
-	const [encodedMessage, setEncodedMessage] = useState<string | undefined>(undefined)
 
 	const [voteSignature, setVoteSignature] = useSessionStorage('voteSignature', undefined)
 	const [encodedMessage, setEncodedMessage] = useSessionStorage('encodedMessage', undefined)
@@ -55,7 +51,6 @@ export default function Home() {
 			setVoteStep(3)
 		}
 	}, [address, humanityProof, voteSignature])
-
 
 	console.log(humanityProof)
 
@@ -81,16 +76,6 @@ export default function Home() {
 						expression, allowing you to have a direct impact on the decisions that matter most to you.
 					</Text>
 				</Box>
-			</Flex>
-			<Flex
-				flexDirection={'column'}
-				alignItems={'center'}
-				justifyContent={'center'}
-				height="50vh"
-				maxWidth="800px"
-				margin="0 auto"
-			>
-				<Text> {voteSignature} </Text>
 			</Flex>
 
 			{isClient && address ? (
@@ -157,16 +142,13 @@ export default function Home() {
 							signal={address}
 							action="vote" //TODO: Check if this is required
 							onSuccess={(result: ISuccessResult) => {
-								setHumanityProof(
-									{
-										proof: result.proof,
-										merkle_root: result.merkle_root,
-										nullifier_hash: result.nullifier_hash,
-									}
-								)
+								setHumanityProof({
+									proof: result.proof,
+									merkle_root: result.merkle_root,
+									nullifier_hash: result.nullifier_hash,
+								})
 							}}
-							onSuccess={setHumanityProof}
-							app_id={process.env.NEXT_PUBLIC_APP_ID!}
+							app_id="app_staging_68cbb33784d54d3b69de47b29857af3e"
 						>
 							{({ open }) => (
 								<Button w="242px" onClick={open}>

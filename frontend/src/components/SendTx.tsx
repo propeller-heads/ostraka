@@ -16,7 +16,7 @@ interface MyInterface {
 export default function SendTx({ voteSignature, encodedMessage, address, humanityProof }: MyInterface) {
 	const parsedValidityProof = JSON.parse(humanityProof)
 	const { config, refetch, error } = usePrepareContractWrite({
-		address: '0xfd241c7E036Db7c7dE131DE116c63e2D983f8d9D',
+		address: '0xaD16CF286d4ad219630F3C0890baa03F65Ad3d92',
 		chainId: 420,
 		abi: ContractAbi,
 		enabled: parsedValidityProof != null && address != null,
@@ -25,8 +25,12 @@ export default function SendTx({ voteSignature, encodedMessage, address, humanit
 			voteSignature,
 			encodedMessage,
 			address,
-			parsedValidityProof?.merkle_root,
-			parsedValidityProof?.nullifier_hash,
+			parsedValidityProof?.merkle_root
+				? decode<BigNumber>('uint256', parsedValidityProof?.merkle_root ?? '')
+				: BigNumber.from(0),
+			parsedValidityProof?.nullifier_hash
+				? decode<BigNumber>('uint256', parsedValidityProof?.nullifier_hash ?? '')
+				: BigNumber.from(0),
 			parsedValidityProof?.proof
 				? decode<[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]>(
 						'uint256[8]',
